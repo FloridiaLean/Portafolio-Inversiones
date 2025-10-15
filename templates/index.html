@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Portafolio de Inversiones</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>💼 Portafolio de Inversiones</h1>
+
+  <div id="contenedor-activos">
+    {% for activo in activos %}
+    <div class="card-activo" id="card-{{ activo }}">
+      <div class="card-header">
+        <h2 onclick="toggleTabla('{{ activo }}')">{{ activo }}</h2>
+        <div>
+          <button class="btn-eliminar" onclick="eliminarActivo('{{ activo }}')">❌</button>
+          <span class="toggle" onclick="toggleTabla('{{ activo }}')">▼</span>
+        </div>
+      </div>
+      <div id="tabla-{{ activo }}" class="tabla-contenedor oculto">
+        <iframe src="/tabla/{{ activo }}" frameborder="0" class="tabla-frame"></iframe>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <button id="btn-agregar-activo">+ Agregar nuevo activo</button>
+
+  <script>
+    const contenedor = document.getElementById("contenedor-activos");
+    const btnAgregarActivo = document.getElementById("btn-agregar-activo");
+
+    btnAgregarActivo.addEventListener("click", async () => {
+      const nombre = prompt("Ingrese el nombre del activo (ej: BTC, ETH):");
+      if (!nombre) return;
+
+      await fetch("/agregar_activo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre })
+      });
+
+      const card = document.createElement("div");
+      card.className = "card-activo";
+      card.id = `card-${nombre}`;
+      card.innerHTML = `
+        <div class="card-header">
+          <h2 onclick="toggleTabla('${nombre}')">${nombre}</h2>
+          <div>
+            <button class="btn-eliminar" onclick="eliminarActivo('${nombre}')">❌</button>
+            <span class="toggle" onclick="toggleTabla('${nombre}')">▼</span>
+          </div>
+        </div>
+        <div id="tabla-${nombre}" class="tabla-contenedor oculto">
+          <iframe src="/tabla/${nombre}" frameborder="0" class="tabla-frame"></iframe>
+        </div>
+      `;
+      contenedor.appendChild(card);
+    });
+
+    function toggleTabla(nombre) {
+      document.getElementById(`tabla-${nombre}`).classList.toggle("oculto");
+    }
+
+    async function eliminarActivo(nombre) {
+      if (!confirm(`¿Seguro que deseas eliminar el activo "${nombre}" y todas sus operaciones?`)) return;
+
+      const res = await fetch(`/eliminar_activo/${nombre}`, { method: "DELETE" });
+      const data = await res.json();
+
+      if (data.status === "ok") {
+        document.getElementById(`card-${nombre}`).remove();
+        alert(`Activo "${nombre}" eliminado correctamente.`);
+      } else {
+        alert("❌ Error al eliminar el activo.");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+<title>Tabla {{ activo }}</title> 
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head> 
+<body>
+  <h1>Activo: {{ activo }}</h1>
+
+  <div class="tabla-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Inversión ($)</th>
+          <th>Cantidad</th>
+          <th>Precio ($)</th>
+          <th>Tipo</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo-tabla"></tbody>
+    </table>
+
+    <div class="botones">
+      <button id="agregar-compra">+ Agregar Compra</button>
+      <button id="agregar-venta" style="background-color: #dc3545;">+ Agregar Venta</button>
+    </div>
+
+    <div class="totales">
+      <span>Total Invertido: $<span id="total-invertido">0</span></span>
+      <span>Total Actual: <span id="total-actual">0</span></span>
+      <span>Total Ganado: $<span id="total-ganado">0</span></span>
+    </div>
+  </div>
+
+  <script>
+    const activo = "{{ activo }}";
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body> 
+</html>
+  

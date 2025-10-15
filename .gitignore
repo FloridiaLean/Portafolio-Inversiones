@@ -1,0 +1,13 @@
+# Carpetas que no se suben
+venv/
+__pycache__/
+instance/
+
+# Archivos que no se suben
+*.pyc
+*.db
+.env
+
+# Archivos temporales o de IDEs
+.DS_Store
+*.log
